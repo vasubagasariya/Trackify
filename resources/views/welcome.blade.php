@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('title', 'Dashboard')
 @section('main')
 
 <div class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">

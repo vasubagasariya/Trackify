@@ -1,7 +1,8 @@
 @extends('layout.main')
+@section('title', 'Update transaction')
 @section('main')
 
-<form action="{{route('transactions.store')}}" method="post" class="bg-dark p-4 rounded text-light shadow-sm">
+<form action="{{route('transactions.update',$data->id)}}" method="post" class="bg-dark p-4 rounded text-light shadow-sm">
     @csrf
     <div class="mb-3">
         <label for="account_id" class="form-label">Account : </label>

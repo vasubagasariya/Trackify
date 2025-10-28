@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('title', 'Create new Transaction')
 @section('main')
 
 <form action="{{route('transactions.store')}}" method="post" class="bg-dark p-4 rounded text-light shadow-sm">

@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('title', 'Update account')
 @section('main')
 
 <form action="{{route('accounts.update',$data->name)}}" method="post" class="bg-dark p-4 rounded text-light shadow-sm">

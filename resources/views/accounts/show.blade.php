@@ -1,4 +1,5 @@
 @extends('layout.main')
+@section('title', 'Accounts')
 @section('main')
 <a href="{{route('accounts.create')}}" class="btn btn-primary mb-3">Create New Account</a>
 <table class="table table-dark table-striped table-hover">

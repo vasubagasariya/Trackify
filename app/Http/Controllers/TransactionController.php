@@ -63,6 +63,27 @@ class TransactionController extends Controller
         return view('transactions.edit',compact('data','account'));
     }
     
+    function update(Request $req, $id){
+        return $req->all();
+        $req->validate([
+            'amount'=> 'required',
+            'category' => 'required',
+            'description' => 'required',
+            'transaction_date' => 'required'
+        ]);
+
+        $transaction = Transaction::where('id',$id)->firstOrFail();
+        $transaction->accounts_id = $req->account_id;
+        $transaction->amount = $req->amount;
+        $transaction->{'credit/debit'} = $req->input('credit/debit');
+        $transaction->category = $req->category;
+        $transaction->description = $req->description;
+        $transaction->transaction_date = $req->transaction_date;
+        $transaction->remaining_balance = $remaining;
+        $transaction->save();
+        return redirect()->route('transactions.show');
+    }
+
     //delete
     function delete($id){
         // return $name;
