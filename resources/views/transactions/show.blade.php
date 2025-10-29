@@ -45,7 +45,9 @@
         <td>{{$a->opening_balance}}</td>
         <td>
             @foreach($current_balance as $c)
-            {{$c['remaining_balance']}}
+                @if($c['accounts_id'] == $a->id)
+                    {{ $c['remaining_balance'] }}
+                @endif
             @endforeach
         </td>
     </tr>

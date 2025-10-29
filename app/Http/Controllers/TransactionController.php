@@ -17,7 +17,7 @@ class TransactionController extends Controller
             $last = Transaction::where('accounts_id',$a->id)->latest('id')->first();
             $current_balance[] = [
                 "accounts_id" => $a->id,
-                "remaining_balance" => $last->remaining_balance
+                "remaining_balance" => $last ? $last->remaining_balance : $a->opening_balance
             ];
         }
         return view('transactions.show',compact('data','account','current_balance'));
@@ -37,6 +37,16 @@ class TransactionController extends Controller
             'description' => 'required',
             'transaction_date' => 'required'
         ]);
+        $lastTransaction = Transaction::where('accounts_id', $req->account_id)
+                        ->latest('transaction_date')
+                        ->first();
+return $lastTransaction;
+    // Check if the entered date is before last transaction
+    if($lastTransaction && $req->transaction_date < $lastTransaction->transaction_date){
+        return back()->withErrors([
+            'transaction_date' => 'Transaction date cannot be earlier than previous transactions.'
+        ])->withInput();
+    }
         $account = Account::find($req->account_id);
         $balance = $account->opening_balance;
 
