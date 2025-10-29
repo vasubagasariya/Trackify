@@ -31,5 +31,21 @@
     </tr>
     @endforeach
 </table>
+<BR><BR><BR></BR></BR></BR>
+
+<table class="table table-dark table-striped tble-hover">
+    <tr>
+        <th>Account</th>
+        <th>Balance</th>
+        <th>Current balance</th>
+    </tr>
+    @foreach($account as $a)
+    <tr>
+        <td>{{$a->name}}</td>
+        <td>{{$a->opening_balance}}</td>
+        <td>{{$a->current_balance}}</td>
+    </tr>
+    @endforeach
+</table>
 
 @endsection

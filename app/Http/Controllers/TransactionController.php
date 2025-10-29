@@ -10,8 +10,9 @@ class TransactionController extends Controller
 {
     // display transactions page
     function show(){
+        $account = Account::all();
         $data = Transaction::with('account')->get();
-        return view('transactions.show',compact('data'));
+        return view('transactions.show',compact('data','account'));
     }
 
     //dislay create page
@@ -29,15 +30,14 @@ class TransactionController extends Controller
             'transaction_date' => 'required'
         ]);
         $account = Account::find($req->account_id);
-        $lastTransaction = $account->transactions()->latest('id')->first();
+        $balance = $account->opening_balance;
 
-        if($lastTransaction){
-            $balance = $lastTransaction->remaining_balance;
-        }
-        else{
-            $balance = $account->opening_balance;
+        $rows = Transaction::where('accounts_id',$req->account_id)->get();
+        foreach($rows as $row){
+            $balance = $balance - $row->amount;
         }
 
+        
         if($req->input('credit/debit') == 'debit'){
             $remaining = $balance - $req->input('amount');
         }
@@ -63,8 +63,8 @@ class TransactionController extends Controller
         return view('transactions.edit',compact('data','account'));
     }
     
+    // update data row
     function update(Request $req, $id){
-        return $req->all();
         $req->validate([
             'amount'=> 'required',
             'category' => 'required',
@@ -72,23 +72,44 @@ class TransactionController extends Controller
             'transaction_date' => 'required'
         ]);
 
+        // check transaction id in transaction table
         $transaction = Transaction::where('id',$id)->firstOrFail();
-        $transaction->accounts_id = $req->account_id;
-        $transaction->amount = $req->amount;
-        $transaction->{'credit/debit'} = $req->input('credit/debit');
-        $transaction->category = $req->category;
-        $transaction->description = $req->description;
-        $transaction->transaction_date = $req->transaction_date;
-        $transaction->remaining_balance = $remaining;
-        $transaction->save();
+
+        // check debit or credit in previous table and manage remainning balance
+        // netrual balnce of old account
+        if($transaction->{'credit/debit'} == 'debit'){
+            $transaction->remaining_balance = $transaction->remaining_balance + $transaction->amount;
+        }
+        else{
+            $transaction->remaining_balance = $transaction->remaining_balance - $transaction->amount;
+        }
+
+        // check debit or credit in request
+        if($req->input('credit/debit') == 'debit'){
+            $remaining = $transaction->remaining_balance - $req->input('amount');
+        }
+        else{
+            $remaining = $transaction->remaining_balance + $req->input('amount');
+        }
+
+            $transaction->accounts_id = $req->account_id;
+            $transaction->amount = $req->amount;
+            $transaction->{'credit/debit'} = $req->input('credit/debit');
+            $transaction->category = $req->category;
+            $transaction->description = $req->description;
+            $transaction->transaction_date = $req->transaction_date;
+            $transaction->remaining_balance = $remaining;
+       
+            $transaction->save();
+       
         return redirect()->route('transactions.show');
     }
 
     //delete
     function delete($id){
-        // return $name;
-        Account::where('name',$name)->delete();
-        $data = Account::all();
-        return view('transactions.show',compact('data'));
+        Transaction::find($id)->delete();
+        $data = Transaction::with('account')->get();
+
+        return redirect()->route('transactions.show',compact('data'));
     }
 }
