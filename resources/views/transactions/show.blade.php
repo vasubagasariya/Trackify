@@ -43,7 +43,11 @@
     <tr>
         <td>{{$a->name}}</td>
         <td>{{$a->opening_balance}}</td>
-        <td>{{$a->current_balance}}</td>
+        <td>
+            @foreach($current_balance as $c)
+            {{$c['remaining_balance']}}
+            @endforeach
+        </td>
     </tr>
     @endforeach
 </table>

@@ -10,9 +10,17 @@ class TransactionController extends Controller
 {
     // display transactions page
     function show(){
-        $account = Account::all();
         $data = Transaction::with('account')->get();
-        return view('transactions.show',compact('data','account'));
+        $account = Account::all();
+        $current_balance = [];
+        foreach($account as $a){
+            $last = Transaction::where('accounts_id',$a->id)->latest('id')->first();
+            $current_balance[] = [
+                "accounts_id" => $a->id,
+                "remaining_balance" => $last->remaining_balance
+            ];
+        }
+        return view('transactions.show',compact('data','account','current_balance'));
     }
 
     //dislay create page
@@ -72,36 +80,55 @@ class TransactionController extends Controller
             'transaction_date' => 'required'
         ]);
 
-        // check transaction id in transaction table
-        $transaction = Transaction::where('id',$id)->firstOrFail();
+        // return old record of id
+        $transaction = Transaction::findOrFail($id);
+
+        // reurn ols account d from transaction
+        $oldAcccountId = $transaction->accounts_id;
+        
+        // save values
+        $transaction->accounts_id = $req->account_id;
+        $transaction->amount = $req->amount;
+        $transaction->{'credit/debit'} = $req->input('credit/debit');
+        $transaction->category = $req->category;
+        $transaction->description = $req->description;
+        $transaction->transaction_date = $req->transaction_date;
+        $transaction->save();
+    
+        $account = Account::find($oldAcccountId);
+            $balance = $account->opening_balance;
+            $transactions = Transaction::where('accounts_id', $oldAcccountId)->get();
+            
+            foreach($transactions as $transaction){
+                if($transaction->{'credit/debit'} == 'debit'){
+                    $balance = $balance - $transaction->amount;
+                }
+                else{
+                    $balance = $balance + $transaction->amount;
+                }
+                $transaction->remaining_balance = $balance;
+                $transaction->save();
+            }
 
         // check debit or credit in previous table and manage remainning balance
         // netrual balnce of old account
-        if($transaction->{'credit/debit'} == 'debit'){
-            $transaction->remaining_balance = $transaction->remaining_balance + $transaction->amount;
+        if($oldAcccountId !=- $req->account_id){
+            $account = Account::find($req->account_id);
+            $balance = $account->opening_balance;
+            $transactions = Transaction::where('accounts_id', $req->account_id)->get();
+            
+            foreach($transactions as $transaction){
+                if($transaction->{'credit/debit'} == 'debit'){
+                    $balance = $balance - $transaction->amount;
+                }
+                else{
+                    $balance = $balance + $transaction->amount;
+                }
+                $transaction->remaining_balance = $balance;
+                $transaction->save();
+            }
         }
-        else{
-            $transaction->remaining_balance = $transaction->remaining_balance - $transaction->amount;
-        }
-
-        // check debit or credit in request
-        if($req->input('credit/debit') == 'debit'){
-            $remaining = $transaction->remaining_balance - $req->input('amount');
-        }
-        else{
-            $remaining = $transaction->remaining_balance + $req->input('amount');
-        }
-
-            $transaction->accounts_id = $req->account_id;
-            $transaction->amount = $req->amount;
-            $transaction->{'credit/debit'} = $req->input('credit/debit');
-            $transaction->category = $req->category;
-            $transaction->description = $req->description;
-            $transaction->transaction_date = $req->transaction_date;
-            $transaction->remaining_balance = $remaining;
-       
-            $transaction->save();
-       
+        
         return redirect()->route('transactions.show');
     }
 
