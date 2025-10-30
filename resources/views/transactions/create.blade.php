@@ -22,8 +22,8 @@
     <div class="mb-3">
         <label for="credit_debit" class="form-label">Credit / Debit : </label>
         <select name="credit_debit" class="form-select">
-            <option value="Credit">Credit</option>
             <option value="Debit">Debit</option>
+            <option value="Credit">Credit</option>
         </select>
     </div>
 

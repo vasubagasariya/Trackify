@@ -53,7 +53,7 @@ class TransactionController extends Controller
             'transaction_date' => $req->transaction_date,
             'remaining_balance' => $remaining
         ]);
-        $this->updateCurrentBalance();
+        self::updateCurrentBalance();
         return redirect()->route('transactions.show');
     }
     
@@ -121,7 +121,7 @@ class TransactionController extends Controller
                 $transaction->save();
             }
         }
-        $this->updateCurrentBalance();
+        self::updateCurrentBalance();
         
         return redirect()->route('transactions.show');
     }
