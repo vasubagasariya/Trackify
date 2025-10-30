@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Account;
+use App\Models\Transaction;
+use App\Http\Controllers\TransactionController;
 
 class AccountController extends Controller
 {
     // display accounts page
     function show(){
-        $data = Account::all();
-        return view('accounts.show',compact('data'));
+        $accounts = Account::all();
+        TransactionController::updateCurrentBalance();
+        return view('accounts.show',compact('accounts'));
     }
 
     //dislay create page
@@ -20,6 +23,7 @@ class AccountController extends Controller
 
     // create page stores
     function store(Request $req){
+        
         $req->validate([
             'name'=> 'required|alpha',
             'type'=> 'required',
@@ -60,7 +64,11 @@ class AccountController extends Controller
     function delete($name){
         // return $name;
         Account::where('name',$name)->delete();
-        $data = Account::all();
-        return view('accounts.show',compact('data'));
+        $accounts = Account::all();
+        return view('accounts.show',compact('accounts'));
     }
+
+
+
+    
 }

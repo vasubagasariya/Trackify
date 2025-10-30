@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');     // bob, uco, rnsb, cash
             $table->string('type');     // bank, cash
-            $table->decimal('opening_balance',15,2)->default(0);
+            $table->decimal('opening_balance',8,2)->default(0);
+            $table->decimal('current_balance',8,2)->default(0);
+            $table->decimal('expence',8,2)->default(0);
             $table->date('opening_date');
             $table->timestamps();
         });

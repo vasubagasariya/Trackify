@@ -12,8 +12,8 @@
     <div class="mb-3">
         <label for="type" class="form-label">Type : </label>
         <select name="type" class="form-select">
-            <option value="cash" @if($data->type == 'cash') selected @endif> Cash</option>
-            <option value="bank" @if($data->type == 'bank') selected @endif> Bank</option>
+            <option value="Cash" @if($data->type == 'Cash') selected @endif> Cash</option>
+            <option value="Bank" @if($data->type == 'Bank') selected @endif> Bank</option>
         </select>
     </div>
     

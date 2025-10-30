@@ -12,8 +12,8 @@
     <div class="mb-3">
         <label for="type" class="form-label">Type : </label>
         <select name="type" class="form-select">
-            <option value="cash">Cash</option>
-            <option value="bank">Bank</option>
+            <option value="Cash">Cash</option>
+            <option value="Bank">Bank</option>
         </select>
     </div>
     

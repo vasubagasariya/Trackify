@@ -14,44 +14,23 @@
         <th>Remaining balance</th>
         <th>Actions</th>
     </tr>
-    @foreach($data as $d)
+    @foreach($transactions as $transaction)
     <tr>
-        <td>{{$d->id}}</td>
-        <td>{{$d->account->name}}</td>
-        <td>{{$d->amount}}</td>
-        <td>{{$d->{'credit/debit'} }}</td>
-        <td>{{$d->category}}</td>
-        <td>{{$d->description}}</td>
-        <td>{{$d->transaction_date}}</td>
-        <td>{{$d->remaining_balance}}</td>
+        <td>{{$transaction->id}}</td>
+        <td>{{$transaction->account->name}}</td>
+        <td>{{$transaction->amount}}</td>
+        <td>{{$transaction->credit_debit }}</td>
+        <td>{{$transaction->category}}</td>
+        <td>{{$transaction->description}}</td>
+        <td>{{$transaction->transaction_date}}</td>
+        <td>{{$transaction->remaining_balance}}</td>
         <td>
-            <a href="{{route('transactions.edit',$d->id)}}" class="btn btn-sm btn-warning btn-action me-1">Edit</a>
-            <a href="{{route('transactions.delete',$d->id)}}" class="btn btn-sm btn-danger btn-action">Delete</a>
+            <a href="{{route('transactions.edit',$transaction->id)}}" class="btn btn-sm btn-warning btn-action me-1">Edit</a>
+            <a href="{{route('transactions.delete',$transaction->id)}}" class="btn btn-sm btn-danger btn-action">Delete</a>
         </td>
     </tr>
     @endforeach
 </table>
 <BR><BR><BR></BR></BR></BR>
-
-<table class="table table-dark table-striped tble-hover">
-    <tr>
-        <th>Account</th>
-        <th>Balance</th>
-        <th>Current balance</th>
-    </tr>
-    @foreach($account as $a)
-    <tr>
-        <td>{{$a->name}}</td>
-        <td>{{$a->opening_balance}}</td>
-        <td>
-            @foreach($current_balance as $c)
-                @if($c['accounts_id'] == $a->id)
-                    {{ $c['remaining_balance'] }}
-                @endif
-            @endforeach
-        </td>
-    </tr>
-    @endforeach
-</table>
 
 @endsection

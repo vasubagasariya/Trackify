@@ -10,17 +10,8 @@ class TransactionController extends Controller
 {
     // display transactions page
     function show(){
-        $data = Transaction::with('account')->get();
-        $account = Account::all();
-        $current_balance = [];
-        foreach($account as $a){
-            $last = Transaction::where('accounts_id',$a->id)->latest('id')->first();
-            $current_balance[] = [
-                "accounts_id" => $a->id,
-                "remaining_balance" => $last ? $last->remaining_balance : $a->opening_balance
-            ];
-        }
-        return view('transactions.show',compact('data','account','current_balance'));
+        $transactions = Transaction::with('account')->get();
+        return view('transactions.show',compact('transactions'));
     }
 
     //dislay create page
@@ -37,40 +28,32 @@ class TransactionController extends Controller
             'description' => 'required',
             'transaction_date' => 'required'
         ]);
-        $lastTransaction = Transaction::where('accounts_id', $req->account_id)
-                        ->latest('transaction_date')
-                        ->first();
-return $lastTransaction;
-    // Check if the entered date is before last transaction
-    if($lastTransaction && $req->transaction_date < $lastTransaction->transaction_date){
-        return back()->withErrors([
-            'transaction_date' => 'Transaction date cannot be earlier than previous transactions.'
-        ])->withInput();
-    }
         $account = Account::find($req->account_id);
-        $balance = $account->opening_balance;
-
-        $rows = Transaction::where('accounts_id',$req->account_id)->get();
-        foreach($rows as $row){
-            $balance = $balance - $row->amount;
+        $lastTransaction = Transaction::where('account_id',$req->account_id)->latest('id')->first();
+        if($lastTransaction){
+            $balance = $lastTransaction->remaining_balance;
+        }
+        else{
+            $balance = $account->opening_balance;
         }
 
         
-        if($req->input('credit/debit') == 'debit'){
+        if($req->input('credit_debit') == 'Debit'){
             $remaining = $balance - $req->input('amount');
         }
         else{
             $remaining = $balance + $req->input('amount');
         }
         Transaction::create([
-            'accounts_id' => $req->account_id,
+            'account_id' => $req->account_id,
             'amount' => $req->amount,
-            'credit/debit' => $req->input('credit/debit'),
+            'credit_debit' => $req->input('credit_debit'),
             'category' => $req->category,
             'description' => $req->description,
             'transaction_date' => $req->transaction_date,
             'remaining_balance' => $remaining
         ]);
+        $this->updateCurrentBalance();
         return redirect()->route('transactions.show');
     }
     
@@ -94,12 +77,12 @@ return $lastTransaction;
         $transaction = Transaction::findOrFail($id);
 
         // reurn ols account d from transaction
-        $oldAcccountId = $transaction->accounts_id;
+        $oldAcccountId = $transaction->account_id;
         
         // save values
-        $transaction->accounts_id = $req->account_id;
+        $transaction->account_id = $req->account_id;
         $transaction->amount = $req->amount;
-        $transaction->{'credit/debit'} = $req->input('credit/debit');
+        $transaction->credit_debit = $req->credit_debit;
         $transaction->category = $req->category;
         $transaction->description = $req->description;
         $transaction->transaction_date = $req->transaction_date;
@@ -107,10 +90,10 @@ return $lastTransaction;
     
         $account = Account::find($oldAcccountId);
             $balance = $account->opening_balance;
-            $transactions = Transaction::where('accounts_id', $oldAcccountId)->get();
+            $transactions = Transaction::where('account_id', $oldAcccountId)->get();
             
             foreach($transactions as $transaction){
-                if($transaction->{'credit/debit'} == 'debit'){
+                if($transaction->credit_debit == 'Debit'){
                     $balance = $balance - $transaction->amount;
                 }
                 else{
@@ -122,13 +105,13 @@ return $lastTransaction;
 
         // check debit or credit in previous table and manage remainning balance
         // netrual balnce of old account
-        if($oldAcccountId !=- $req->account_id){
+        if($oldAcccountId != $req->account_id){
             $account = Account::find($req->account_id);
             $balance = $account->opening_balance;
-            $transactions = Transaction::where('accounts_id', $req->account_id)->get();
+            $transactions = Transaction::where('account_id', $req->account_id)->get();
             
             foreach($transactions as $transaction){
-                if($transaction->{'credit/debit'} == 'debit'){
+                if($transaction->credit_debit == 'Debit'){
                     $balance = $balance - $transaction->amount;
                 }
                 else{
@@ -138,6 +121,7 @@ return $lastTransaction;
                 $transaction->save();
             }
         }
+        $this->updateCurrentBalance();
         
         return redirect()->route('transactions.show');
     }
@@ -148,5 +132,25 @@ return $lastTransaction;
         $data = Transaction::with('account')->get();
 
         return redirect()->route('transactions.show',compact('data'));
+    }
+
+
+    public static function updateCurrentBalance(){
+        $accounts = Account::all();
+        foreach($accounts as $account){
+            $balance =  $account->opening_balance;
+            $transactions = Transaction::where('account_id',$account->id)->get();
+            foreach($transactions as $transaction){
+                if($transaction->credit_debit == 'Credit'){
+                    $balance = $balance + $transaction->amount;
+                }
+                else{
+                    $balance = $balance - $transaction->amount;
+                }
+            }
+            $account->current_balance = $balance;
+            $account->expence = $account->opening_balance - $account->current_balance;
+            $account->save();
+        }
     }
 }

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('accounts_id');      //id of account cash(1), bob(2), rnsb(3), uco(4)
-            $table->foreign('accounts_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->unsignedBigInteger('account_id');      //id of account cash(1), bob(2), rnsb(3), uco(4)
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->decimal('amount',8,2)->default(0);
-            $table->string('credit/debit');
+            $table->string('credit_debit');
             $table->string('category');         // travel, food, home
             $table->string('description');      // detail of expense or earn dosa, brts, recharge
             $table->date('transaction_date');

@@ -20,10 +20,10 @@
     </div>
 
     <div class="mb-3">
-        <label for="credit/debit" class="form-label">Credit / Debit : </label>
-        <select name="credit/debit" class="form-select">
-            <option value="credit">Credit</option>
-            <option value="debit">Debit</option>
+        <label for="credit_debit" class="form-label">Credit / Debit : </label>
+        <select name="credit_debit" class="form-select">
+            <option value="Credit">Credit</option>
+            <option value="Debit">Debit</option>
         </select>
     </div>
 

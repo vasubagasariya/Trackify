@@ -8,15 +8,19 @@
         <th>Name</th>
         <th>Type</th>
         <th>Opening Balance</th>
+        <th>Expence</th>
+        <th>Current Balance</th>
         <th>Opening Date</th>
         <th>Actions</th>
     </tr>
-    @foreach($data as $d)
+    @foreach($accounts as $d)
     <tr>
         <td>{{$d->id}}</td>
         <td>{{$d->name}}</td>
         <td>{{$d->type}}</td>
         <td>{{$d->opening_balance}}</td>
+        <td>{{$d->expence}}</td>
+        <td>{{$d->current_balance}}</td>
         <td>{{$d->opening_date}}</td>
         <td>
             <a href="{{route('accounts.edit',$d->name)}}" class="btn btn-sm btn-warning btn-action me-1">Edit</a>

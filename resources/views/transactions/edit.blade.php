@@ -9,7 +9,7 @@
         <select name="account_id" class="form-select">
             @foreach($account as $d)
                 <option value="{{$d->id}}" 
-                    @if( $data->accounts_id == $d->id) selected @endif>
+                    @if( $data->account_id == $d->id) selected @endif>
                     {{$d->name}}
                 </option>
             @endforeach
@@ -23,10 +23,10 @@
     </div>
 
     <div class="mb-3">
-        <label for="credit/debit" class="form-label">Credit / Debit : </label>
-        <select name="credit/debit" class="form-select">
-            <option value="credit" @if($data->{'credit/debit'} == 'credit') selected @endif>Credit</option>
-            <option value="debit" @if($data->{'credit/debit'} == 'debit') selected @endif>Debit</option>
+        <label for="credit_debit" class="form-label">Credit / Debit : </label>
+        <select name="credit_debit" class="form-select">
+            <option value="Credit" @if($data->credit_debit == 'Credit') selected @endif>Credit</option>
+            <option value="Debit" @if($data->credit_debit == 'Debit') selected @endif>Debit</option>
         </select>
     </div>
 

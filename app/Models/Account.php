@@ -11,6 +11,6 @@ class Account extends Model
     protected $fillable = ['name', 'type', 'opening_balance', 'opening_date'];
 
     public function transactions(){
-        return $this->hasMany(Transaction::class,'accounts_id');
+        return $this->hasMany(Transaction::class,'account_id');
     }
 }
