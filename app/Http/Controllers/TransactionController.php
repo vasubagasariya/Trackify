@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\Transfer;
+
 
 class TransactionController extends Controller
 {
@@ -140,6 +142,9 @@ class TransactionController extends Controller
         foreach($accounts as $account){
             $balance =  $account->opening_balance;
             $transactions = Transaction::where('account_id',$account->id)->get();
+            $transfers = Transfer::where('from_account',$account->id)->get();
+            $transfers_to = Transfer::where('to_account',$account->id)->get();
+
             foreach($transactions as $transaction){
                 if($transaction->credit_debit == 'Credit'){
                     $balance = $balance + $transaction->amount;
@@ -148,9 +153,19 @@ class TransactionController extends Controller
                     $balance = $balance - $transaction->amount;
                 }
             }
+            
+            foreach($transfers as $t){
+                $balance = $balance - $t->amount;
+            }
+            foreach($transfers_to as $t){
+                $balance = $balance + $t->amount;
+            }
+            
             $account->current_balance = $balance;
             $account->expence = $account->opening_balance - $account->current_balance;
             $account->save();
+
         }
+        
     }
 }

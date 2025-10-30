@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransferController;
 
 Route::view('/','welcome');
 
@@ -22,4 +23,15 @@ Route::prefix('transactions')->name('transactions.')->group(function(){
     Route::get('edit/{id}',[TransactionController::class, 'edit'])->name('edit');
     Route::post('update/{id}',[TransactionController::class, 'update'])->name('update');
     Route::get('delete/{id}',[TransactionController::class, 'delete'])->name('delete');
+});
+
+Route::prefix('transfers')->name('transfers.')->group(function(){
+    Route::get('show',[TransferController::class,'show'])->name('show');
+
+    Route::get('create',[TransferController::class,'create'])->name('create');
+    Route::post('store',[TransferController::class, 'store'])->name('store');
+    Route::get('edit/{id}',[TransferController::class, 'edit'])->name('edit');
+    Route::post('update/{id}',[TransferController::class, 'update'])->name('update');
+    Route::get('delete/{id}',[TransferController::class, 'delete'])->name('delete');
+
 });

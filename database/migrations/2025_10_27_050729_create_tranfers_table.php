@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tranfers', function (Blueprint $table) {
+        Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('from_account');     // id of acccounts cash or bank account
             $table->foreign('from_account')->references('id')->on('accounts')->onDelete('cascade');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tranfers');
+        Schema::dropIfExists('transfers');
     }
 };

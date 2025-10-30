@@ -8,7 +8,7 @@
     <div class="d-flex flex-wrap justify-content-center gap-5">
         <a href="{{ route('accounts.show') }}" class="btn btn-primary btn-lg">Accounts</a>
         <a href="{{ route('transactions.show')}}" class="btn btn-success btn-lg">Transactions</a>
-        <a href="" class="btn btn-warning btn-lg">Transfers</a>
+        <a href="{{ route('transfers.show')}}" class="btn btn-warning btn-lg">Transfers</a>
     </div>
 </div>
 

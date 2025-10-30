@@ -13,4 +13,12 @@ class Account extends Model
     public function transactions(){
         return $this->hasMany(Transaction::class,'account_id');
     }
+
+    public function sentTrasfer(){
+        return $this->hasMany(Transfer::class,'from_account');
+    }
+
+    public function recievedTransfer(){
+        return $this->hasMany(Transfer::class,'to_account');
+    }
 }
