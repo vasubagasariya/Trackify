@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\Transaction;
-use App\Http\Controllers\TransactionController;
+use App\Services\BalanceService;
+
 
 class AccountController extends Controller
 {
     // display accounts page
     function show(){
+        BalanceService::updateCurrentBalance();
         $accounts = Account::all();
-        TransactionController::updateCurrentBalance();
         return view('accounts.show',compact('accounts'));
     }
 
@@ -27,7 +28,7 @@ class AccountController extends Controller
         $req->validate([
             'name'=> 'required|alpha',
             'type'=> 'required',
-            'opening_balance' => 'required',
+            'opening_balance' => 'required | numeric',
             'opening_date' => 'required'
         ]);
         Account::create($req->all());
@@ -62,10 +63,8 @@ class AccountController extends Controller
 
     //delete
     function delete($name){
-        // return $name;
         Account::where('name',$name)->delete();
-        $accounts = Account::all();
-        return view('accounts.show',compact('accounts'));
+        return redirect()->route('accounts.show');
     }
 
 

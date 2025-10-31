@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Account;
 use App\Models\Transfer;
-
+use App\Services\BalanceService;
 
 class TransactionController extends Controller
 {
@@ -55,7 +55,7 @@ class TransactionController extends Controller
             'transaction_date' => $req->transaction_date,
             'remaining_balance' => $remaining
         ]);
-        self::updateCurrentBalance();
+        BalanceService::updateCurrentBalance();
         return redirect()->route('transactions.show');
     }
     
@@ -123,7 +123,7 @@ class TransactionController extends Controller
                 $transaction->save();
             }
         }
-        self::updateCurrentBalance();
+        BalanceService::updateCurrentBalance();
         
         return redirect()->route('transactions.show');
     }
@@ -131,41 +131,7 @@ class TransactionController extends Controller
     //delete
     function delete($id){
         Transaction::find($id)->delete();
-        $data = Transaction::with('account')->get();
 
-        return redirect()->route('transactions.show',compact('data'));
-    }
-
-
-    public static function updateCurrentBalance(){
-        $accounts = Account::all();
-        foreach($accounts as $account){
-            $balance =  $account->opening_balance;
-            $transactions = Transaction::where('account_id',$account->id)->get();
-            $transfers = Transfer::where('from_account',$account->id)->get();
-            $transfers_to = Transfer::where('to_account',$account->id)->get();
-
-            foreach($transactions as $transaction){
-                if($transaction->credit_debit == 'Credit'){
-                    $balance = $balance + $transaction->amount;
-                }
-                else{
-                    $balance = $balance - $transaction->amount;
-                }
-            }
-            
-            foreach($transfers as $t){
-                $balance = $balance - $t->amount;
-            }
-            foreach($transfers_to as $t){
-                $balance = $balance + $t->amount;
-            }
-            
-            $account->current_balance = $balance;
-            $account->expence = $account->opening_balance - $account->current_balance;
-            $account->save();
-
-        }
-        
+        return redirect()->route('transactions.show');
     }
 }

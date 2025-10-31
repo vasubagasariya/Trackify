@@ -1,5 +1,5 @@
 @extends('layout.main')
-@section('title', 'Transactions')
+@section('title', 'Transfers')
 @section('main')
 <a href="{{route('transfers.create')}}" class="btn btn-primary mb-3">Create New Transaction</a>
 <table class="table table-dark table-striped table-hover">
