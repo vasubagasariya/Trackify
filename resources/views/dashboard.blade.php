@@ -9,6 +9,8 @@
         <a href="{{ route('accounts.show') }}" class="btn btn-primary btn-lg">Accounts</a>
         <a href="{{ route('transactions.show')}}" class="btn btn-success btn-lg">Transactions</a>
         <a href="{{ route('transfers.show')}}" class="btn btn-warning btn-lg">Transfers</a>
+        <a href="{{ route('logout')}}" class="btn btn-danger btn-lg">Logout</a>
+
     </div>
 </div>
 
